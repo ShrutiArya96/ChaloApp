@@ -53,6 +53,8 @@ class routeCreator {
                 this.addRoute(route);
             });
             this.showRouteOnMap(routesStore[0]);
+            let exportBtn = document.getElementById('exportRoutes');
+            exportBtn.style.display = 'block';
         }
     }
 
@@ -72,7 +74,14 @@ class routeCreator {
                 this.route.destinationPlace = place;
             } else {
                 let id = el.parentElement.id;
-                this.route.wayPointStops.push({id: id, location: place.formatted_address, stopover: true});
+                let idx = this.route.wayPointStops.findIndex(stop => stop.id == id);
+                if(idx > -1) {
+                    this.route.wayPointStops[idx] = {
+                        id: id, location: place.formatted_address, stopover: true
+                    }
+                } else {
+                    this.route.wayPointStops.push({id: id, location: place.formatted_address, stopover: true});
+                }
             }
         }
         autocomplete.addListener("place_changed", callBack.bind(this));
@@ -155,11 +164,16 @@ class routeCreator {
         var routeData = rt ? rt : {
             routeId: newRouteId,
             routeName: routeName,
+            isActive: true,
             origin: origin,
             destination: destination,
             waypoints: stops || []
         }
-        let showRoute = document.getElementById(newRouteId+"-showRoute");
+        if(routeData.isActive) routeEL.style.backgroundColor = '#cdf8c2'
+        routesStore.forEach(route => route.isActive = false);
+        let showRoute = document.getElementById(newRouteId+"-showRoute", true);
+
+
         showRoute.addEventListener('click', this.showRouteOnMap.bind(this, routeData));
         let deleteRoute = document.getElementById(newRouteId+"-deleteRoute");
         deleteRoute.addEventListener('click', this.deleteRoute.bind(this, routeData, deleteRoute));
@@ -193,7 +207,7 @@ class routeCreator {
         document.getElementById('name-input').value = '';
     }
 
-    showRouteOnMap(routeData) {
+    showRouteOnMap(routeData, setActive) {
         if (!routeData.origin || !routeData.destination) {
         return;
         }
@@ -213,8 +227,37 @@ class routeCreator {
             window.alert("Directions request failed due to " + status);
             }
         });
+        if(routeData.isActive || setActive) this.showOrSetActiveRoute(routeData.routeId);
     }
 
+    showOrSetActiveRoute(idx) {
+        let routesStore = JSON.parse(localStorage.getItem('googleMapRoutes'));
+        routesStore.forEach(route => {
+            route.isActive = false;
+            if(route.routeId === idx) {
+                route.isActive = true;
+            }
+        })
+        let boxes = document.querySelectorAll('.routeBox');
+        boxes.forEach(box => {box.style.backgroundColor = '#fff'})
+
+        if(idx) {
+            let el = document.getElementById(idx);
+            el.style.backgroundColor = '#cdf8c2'
+        }
+        localStorage.setItem('googleMapRoutes', JSON.stringify(routesStore));
+
+    }
+
+}
+
+function exportRoutes() {
+    let routesStore = localStorage.getItem('googleMapRoutes');
+    const a = document.createElement("a");
+    const file = new Blob([routesStore], { type: "text/plain" });
+    a.href = URL.createObjectURL(file);
+    a.download = "exported-routes.json";
+    a.click();
 }
 
 window.initMap = initMap;
