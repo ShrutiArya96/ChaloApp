@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <title>Place Autocomplete and Directions</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <!-- jsFiddle will insert css and js -->
+    <script src="index.js" defer></script>
+    <style >
+        #map {
+    height: 100%;
+  }
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  input[type=text] {
+    width: 65%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 12px;
+    background-color: white;
+    padding: 5px 9px 5px 17px;
+}
+
+  .actions {
+    background-color: #3d71e2; /* Green */
+    border-radius: 4px;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 9px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+  .deleteIcon{
+    height: 20px;
+    position: relative;
+    top: 6px;
+    left: 5px;
+  }
+  .actions-danger {
+    background-color: #e23d3d;
+    border-radius: 4px;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 9px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+.stopContainer {
+    text-align: center;
+}
+.routeBox {
+    margin-top: 12px;
+    position: relative;
+  padding: 1px 5px 7px 15px;
+  background: #fff;
+  max-width: 400px;
+  border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.3);
+}
+.placeField{
+    padding: 10px;
+    align-items: baseline;
+}
+.routeInputs{
+    text-align: center;
+    padding: 10px;
+}
+.inputLabel{
+    font-size: 12px;
+}
+.routesPanel{
+    height: 60%;
+    overflow: auto;
+    padding: 15px;
+    background: #1488cc;
+  background: -webkit-linear-gradient(to right, #2b32b2, #1488cc);
+  background: linear-gradient(to right,#2b32b2,#1488cc);
+}
+  #origin-input:focus,
+  #destination-input:focus {
+    border-color: #4d90fe;
+  }
+    </style>
+  </head>
+  <body>
+      <div style="display: flex; height: 100%;">
+        <div class="route-panel" style="width: 50%;">
+            <div class="routeInputs">
+                <div class="placeField">
+                    <label class="inputLabel">Route Name:<span style="color: #e23d3d;">*</span></label><input
+                    id="name-input" class="controls" type="text"
+                    placeholder="Enter a route name"/>
+                </div>
+                <div class="placeField">
+                    <label class="inputLabel">Origin Name:<span style="color: #e23d3d;">*</span></label><input
+                    id="origin-input" class="controls" type="text"
+                    placeholder="Enter an origin location"/>
+                </div>
+                <div id="stops" class="stopContainer"></div>
+                <div class="placeField">
+                    <label class="inputLabel">Destination Name:<span style="color: #e23d3d;">*</span></label><input
+                    id="destination-input" class="controls" type="text"
+                    placeholder="Enter a destination location"/>
+                </div>
+                <button id="addStop" class="actions">add stop</button>
+                <button id="addRoute" class="actions">add route</button>
+            </div>
+
+            <div id="routes" class='routesPanel'>
+            </div>
+        </div>
+        <div class="mapContainer" style="width: 50%; height: 100%; padding: 15px;">
+            <div id="map" style="border-radius: 13px;" ></div>
+        </div>
+        
+      </div>
+
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&libraries=places&v=weekly"
+      defer
+    ></script>
+  </body>
+</html>
